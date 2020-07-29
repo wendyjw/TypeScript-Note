@@ -1,22 +1,28 @@
-class Person {
-    name:string;
-    constructor (n:string) {
-        this.name = n
-    }
-    getName():void {
-        alert(this.name)
-    }
+class Per {
+   name:string = 'per'
+   constructor(name:string) {
+       this.name = name
+   }
+   job():void{
+    alert('do job')
+   }
 }
-var person1 = new Person('wenjwu')
-person1.getName() // 输出“wenjwu”
 
-class Teacher extends Person {
-    constructor (name: string) {
-        super (name)
+
+class Teacher extends Per {
+    constructor(name:string) {
+        super(name)
     }
-    work():void {
-        alert(`${this.name} is working`)
+    job():void {
+        alert(`${this.name} is teacher`)
     }
 }
-var teacher1 = new Teacher('Lily')
-teacher1.work()
+
+class Worker1 extends Per {
+    constructor(name:string) {
+        super(name)
+    }
+    job = ():void  => {
+        alert(`${this.name} is worker`)   
+    }
+}

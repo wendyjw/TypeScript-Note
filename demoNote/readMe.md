@@ -126,7 +126,7 @@ boolean, number, string, Array, null, undefined,
 
     注意：可选参数必须配置到参数的最后
 
- ##### 3.3 方法默认参数    
+##### 3.3 方法默认参数    
 
     function getInfo(name:string, age:number=20):string{
         if (age) {
@@ -141,7 +141,7 @@ boolean, number, string, Array, null, undefined,
      注意：默认参数配置位置没有规定
 
 
- ##### 3.4 方法剩余参数 
+##### 3.4 方法剩余参数 
 
  使用三点运算符实现
 
@@ -166,7 +166,7 @@ boolean, number, string, Array, null, undefined,
     }
      getSum([1,2,3,4]) // 此时a = 1, b = 2, result = [3,4]
 
-  ##### 3.4 ts中方法的重载
+##### 3.5 ts中方法的重载
 
     function getInfo(name:string):string; //  没有方法体
     function getInfo(age:number):string; //  没有方法体
@@ -178,4 +178,305 @@ boolean, number, string, Array, null, undefined,
         }
     }
 
+    getInfo('wenjwu') // 正常运行
+    getInfo(26)      // 正常运行
+    getInfo(true)   // 报错
+
+#### 4. 类和继承
+
+##### 4.1 Es5中使用方法
+
+    构造函数
+    function Person () {
+        this.name = 'person'
+        this.age = 12
+    }
+
+    Person.prototype.getInfo = function () {
+        alert('Run getInfo')
+    }
+
+    <!-- 创建静态方法 -->
+    Person.getStatic = function () {
+        alert('I am a static function')
+    }
+
+    可以直接使用Person.getStatic()调用静态方法
+
+    实例对象
+    var person1 = new Person()
+
+    使用person1.getInfo()调用实例方法
+
+    继承：
+
+    1. 原型链继承
+    function Teacher () {
+
+    }
+    Teacher.prototype = new Person ()
+    var teacher1 = new Teacher()
+    teacher1.name         // 输出“person”
+    teacher1.getInfo     // 输出“Run getInfo”
+
+    注意：1. 继承构造函数中的属性和方法，也可以继承原型链中属性和方法
+         2. 实例化子类没法给父类传参
+
+    2. 对象冒充 
+    function Teacher () {
+        Person.call(this)
+    }
+    var teacher2 = new Teacher()
+    teacher2.name      // 输出“person”
+    teacher2.getInfo() // 报错
+    注意：对象冒充可以继承构造函数中的属性和方法，但是不能继承原型链中属性和方法
     
+    3. 原型链 + 对象冒充 组合继承
+
+    function Person (name, age) {
+        this.name = name
+        this.age = age
+        this.run = function(){
+            alert('run in person')
+        }
+    }
+
+    function Teacher (name, age) {
+        Person.call(this, name, age)
+    }
+
+    Teacher.prototype = Object.create(Person.prototype)
+    Teacher.prototype.constrctor = Teacher
+    var teacher3 = new Teacher('wenjwu', 26)
+    teacher3.name         // 输出“wenjwu”
+    teacher3.run         // 输出“run in person”
+
+##### 4.2 ts 中定义类
+
+    class Person {
+        name:string;                // 属性,省略了public关键词,后续可以用this.name访问
+        constructor (n:string) {    // 构造函数，在实例化类的时候触发
+            this.name = n;
+        }
+        getName():void {
+            alert(this.name)
+        }
+    }
+    var person1 = new Person('wenjwu')
+    person1.getName() // 输出“wenjwu”
+
+    转义成es5
+    var Person = /** @class */ (function () {
+        function Person(n) {
+            this.name = n;
+        }
+        Person.prototype.getName = function () {
+            alert(this.name);
+        };
+        return Person;
+    }());
+    var person1 = new Person('wenjwu');
+    person1.getName(); // 输出“wenjwu”
+
+
+##### 4.3 ts 中继承
+
+    class Person {
+        name:string;                
+        constructor (n:string) {  
+            this.name = n;
+        }
+        getName():void {
+            alert(this.name)
+        }
+    }
+
+    Teacher 继承Person
+    class Teacher extends Person {
+        constructor (name: string) {
+            super (name)        // 初始化父类的构造函数
+        }
+        work():void {
+            alert(`${this.name} is working`)
+        }
+    }
+    var teacher1 = new Teacher('Lily')
+    teacher1.getName(); // 输出“Lily”
+    teacher1.work();   // 输出“Lily is working”
+
+    转成Es5的代码
+
+    "use strict";
+    var __extends = (this && this.__extends) || (function () {
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf ||
+                ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+                function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            return extendStatics(d, b);
+        };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() { this.constructor = d; }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    })();
+
+    var Person = /** @class */ (function () {
+        function Person(n) {
+            this.name = n;
+        }
+        Person.prototype.getName = function () {
+            alert(this.name);
+        };
+        return Person;
+    }());
+    var person1 = new Person('wenjwu');
+    person1.getName(); // 输出“wenjwu”
+
+    var Teacher = /** @class */ (function (_super) {
+        __extends(Teacher, _super);
+        function Teacher(name) {
+            return _super.call(this, name) || this;
+        }
+        Teacher.prototype.work = function () {
+            alert(this.name + " is working");
+        };
+        return Teacher;
+    }(Person));
+
+    var teacher1 = new Teacher('Lily');
+    teacher1.work();
+
+##### 4.5 ts 类里面的三种修饰符
+
+- public 公有类型: 可以在类里面，子类里面，类外部都可以访问实例属性（注意不是静态属性）
+- protected 保护类型: 可以在类里，子类里访问，类外部不能访问...
+- private 私有类型: 可以在类里访问，子类里, 类外部不能访问...
+
+如果没有设置,默认是public
+
+    class Person {
+        protected name:string;
+        constructor (n:string) {
+            this.name = n
+        }
+        getName():void {
+            alert(this.name)                    //类里都可访问
+        }
+    }
+
+    class Teacher extends Person {
+        constructor (name: string) {
+            super (name)
+        }
+        work():void {
+            alert(`${this.name} is working`)  // private类型时会报错
+        }
+    }
+
+    var person1 = new Person('wenjwu')
+    console.log(person1.name)       // protected, private类型时会报错
+
+    var teacher1 = new Teacher('Lily')
+    console.log(teacher1.name)      // protected, private类型时会报错
+
+##### 4.6 ts 类中静态属性和静态方法
+
+##### 4.6.1 ES 5中静态属性和方法
+
+    function Person () {
+        this.name = 'aaa'               // name: 实例属性
+        this.run = function () {        // run: 实例方法
+            ...
+        }
+    }
+
+    Person.age = 12         // 静态属性
+
+    Person.work = function(){   // 静态方法
+        ...
+    }
+
+    静态方法调用： Person.work()
+    实例方法调用： var p = new Person();
+                 p.run()
+
+使用场景：jquery($)伪代码
+
+    function $(element) {
+        return new Base(element)
+    }
+
+    function base (element, cssKey, value) {
+        this.element = elment(获取DOM节点)
+        this.css= function (arr, value) => {
+            this.element.style.cssKey = value
+        }
+    }
+
+    $('.box').css('color', 'red')   // 实例方法
+    $.ajax(...)                     // 静态方法，直接调用$的方法
+
+##### 4.6.2 ts 中静态属性和方法
+
+    class Per {
+        public name:string = 'wenjwu'       // 实例属性
+        protected class:string = 'num 1'   // 实例属性
+        static age:number = 12            // 静态属性
+        constructor (name:string, age: number) {
+            this.name = name
+            this.age = age              // 报错：它是实例属性而不是实例属性
+        }
+
+        run ():void {                   // 实例方法
+            console.log('do run');
+            alert(`${this.name}`)       // 成功
+            alert(`${this.age}`) 
+        };
+
+        static work ():void {           //静态方法
+            console.log('do work');
+            alert(`${this.name}`)       // 报错：静态方法中无法访问 public , protected属性
+            alert(`${Per.age}`)         // 成功：静态方法中可以访问静态属性，且使用Per.age访问
+        };
+    }
+
+    var P = new Per('www', 34)
+    P.run()       // 访问实例方法
+    Per.work()    // 访问静态方法
+
+
+##### 4.6.2 ts 中多态
+多态：父类定义一个方法不去实现，让继承他的子类去实现， 不同子类有不同表现形式
+多态属于继承
+
+    class Per {
+        name:string = 'per'
+        constructor(name:string) {
+            this.name = name
+        }
+        job():void{         
+            // 没有具体指名功能
+            alert('do job')
+        }
+    }
+
+
+    class Teacher extends Per {
+        constructor(name:string) {
+            super(name)
+        }
+        job():void {
+            // 实现功能
+            alert(`${this.name} is teacher`)
+        }
+    }
+
+    class Worker1 extends Per {
+        constructor(name:string) {
+            super(name)
+        }
+        job = ():void  => {
+            alert(`${this.name} is worker`)   
+        }
+    }
