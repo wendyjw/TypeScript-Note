@@ -446,7 +446,7 @@ boolean, number, string, Array, null, undefined,
     Per.work()    // 访问静态方法
 
 
-##### 4.6.2 ts 中多态
+#### 4.7 ts 中多态
 多态：父类定义一个方法不去实现，让继承他的子类去实现， 不同子类有不同表现形式
 多态属于继承
 
@@ -479,4 +479,28 @@ boolean, number, string, Array, null, undefined,
         job = ():void  => {
             alert(`${this.name} is worker`)   
         }
+    }
+
+#### 4.8 ts 中的抽象类
+
+- 抽象类以abstract关键词定义
+
+    abstract class Person {         // ts中的抽象类，她是提供其他类继承的基类，不能直接被实例化
+        public name:string
+        constructor(name:string) {
+            this.name = name
+        }
+        abstract eat():void    // 抽象类中的抽象方法不包含具体实现，并且必须在派生类中实现该方法
+        }
+
+        // var P = new Person()     // 报错：抽象类不能被实例
+
+    class Cat extends Person{
+        constructor(name:string) {
+            super(name)
+        }
+        eat(){                      // 派生类中必须包含eat方法
+            alert(`${this.name}`)
+        }
+        // abstract run():void      // 报错：抽象方法只能放在抽象类中
     }

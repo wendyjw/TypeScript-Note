@@ -13,25 +13,19 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 var Person = /** @class */ (function () {
-    function Person(n) {
-        this.name = n;
+    function Person(name) {
+        this.name = name;
     }
-    Person.prototype.getName = function () {
-        alert(this.name);
-    };
     return Person;
 }());
-var person1 = new Person('wenjwu');
-person1.getName(); // 输出“wenjwu”
-var Teacher = /** @class */ (function (_super) {
-    __extends(Teacher, _super);
-    function Teacher(name) {
+// var P = new Person()     // 报错：抽象类不能被实例
+var Cat = /** @class */ (function (_super) {
+    __extends(Cat, _super);
+    function Cat(name) {
         return _super.call(this, name) || this;
     }
-    Teacher.prototype.work = function () {
-        alert(this.name + " is working");
+    Cat.prototype.eat = function () {
+        alert("" + this.name);
     };
-    return Teacher;
+    return Cat;
 }(Person));
-var teacher1 = new Teacher('Lily');
-teacher1.work();
