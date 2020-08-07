@@ -485,22 +485,104 @@ boolean, number, string, Array, null, undefined,
 
 - 抽象类以abstract关键词定义
 
-    abstract class Person {         // ts中的抽象类，她是提供其他类继承的基类，不能直接被实例化
-        public name:string
-        constructor(name:string) {
-            this.name = name
-        }
-        abstract eat():void    // 抽象类中的抽象方法不包含具体实现，并且必须在派生类中实现该方法
+        abstract class Person {         // ts中的抽象类，她是提供其他类继承的基类，不能直接被实例化
+            public name:string
+            constructor(name:string) {
+                this.name = name
+            }
+            abstract eat():void    // 1）抽象方法必须包含在抽象类中。2）抽象类中的抽象方法不包含具体实现，并且必须在派生类中实现该方法
         }
 
         // var P = new Person()     // 报错：抽象类不能被实例
 
-    class Cat extends Person{
-        constructor(name:string) {
-            super(name)
+        class Cat extends Person{
+            constructor(name:string) {
+                super(name)
+            }
+            eat(){                      // 派生类中必须包含eat方法
+                alert(`${this.name}`)
+            }
+            // abstract run():void      // 报错：抽象方法只能放在抽象类中
         }
-        eat(){                      // 派生类中必须包含eat方法
-            alert(`${this.name}`)
-        }
-        // abstract run():void      // 报错：抽象方法只能放在抽象类中
+
+
+#### 5. 接口类型
+
+接口：行为和类型的规范
+
+##### 5.1 属性类接口
+
+    定义接口
+    interface NameType {
+        firstName: string; // 注意；结束
+        lastName: string;
     }
+
+    function setName(name: NameType):void {
+        console.log(`first name is ${name.firstName}, last name is ${name.lastName}`);
+    }
+    // setName({firstName:'wu', lastName: 'wenj', age:12}) 报错，因为NameType中不包含age
+    var obj = {firstName:'wu', lastName: 'wenj', age:12}；// 正常，参数中必须包含firstName和lastName,但是不推荐这样使用，参数最好和接口定义时保持一致
+    setName(obj)  
+
+接口：可选属性
+
+        interface NameType {
+            firstName: string;
+            lastName?: string;
+        }
+
+        function setName (name: NameType) {
+            console.log(`${name}`);
+        }
+        var obj = {
+            firstName: 'wu' // lastName可选，所以不报错
+        }
+        setName(obj);
+
+实例： 模拟ajax请求
+
+        // $.ajax({
+        //     type: 'post',
+        //     url: api.apiHost,
+        //     async: true,
+        //     data: {
+        //     }
+        // })
+
+        interface AjaxData {
+            type: string;
+            url: string;
+            async: boolean;
+            data?: string；
+        }
+        function setAjaxData (config: AjaxData) {
+            var xhr = new XMLHttpRequest;
+            xhr.open(config.type, config.url)；
+            xhr.send(config.data)；
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    console.log('send success')；
+                }
+            }
+        }
+        var obj = {
+            type: 'post',
+            url: 'https://www.baidu.com',
+            async: true,
+            data: "{name: 'wenjwu', age: 12}"
+        };
+        setAjaxData(obj)；
+
+##### 5.2 函数类接口
+对方法传入的类型及返回值进行批量约束
+
+    interface encrypt {
+        (key: string, value: string):string //传入参数和返回值都是字符串
+    }
+
+    var md5:encrypt = function(name: string, id: string):string { //定义md5函数
+        return `${name}-${id}`
+    }
+    var sha1:enc
+    md5('wenjwu','conf6300')
