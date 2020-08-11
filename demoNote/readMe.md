@@ -349,9 +349,9 @@ boolean, number, string, Array, null, undefined,
 
 ##### 4.5 ts 类里面的三种修饰符
 
-- public 公有类型: 可以在类里面，子类里面，类外部都可以访问实例属性（注意不是静态属性）
-- protected 保护类型: 可以在类里，子类里访问，类外部不能访问...
-- private 私有类型: 可以在类里访问，子类里, 类外部不能访问...
+- public 公有类型: 可以在类里面/子类里面/类外部都可以访问实例属性（注意不是静态属性）
+- protected 保护类型: 可以在类里/子类里访问，类外部不能访问...
+- private 私有类型: 可以在类里访问，子类里/类外部不能访问...
 
 如果没有设置,默认是public
 
@@ -584,5 +584,186 @@ boolean, number, string, Array, null, undefined,
     var md5:encrypt = function(name: string, id: string):string { //定义md5函数
         return `${name}-${id}`
     }
-    var sha1:enc
+    var sha1:encrypt
     md5('wenjwu','conf6300')
+
+##### 5.3 可索引接口（不常用）
+
+1) 对数组的约束
+    interface userNumber {
+        [index: number]:string  // 索引时munber类型，索引值为string类型
+    }
+    var arr:userNumber=['aa','bb']
+
+2) 对对象的约束
+    interface userObj {
+        [index: string]: string
+    }
+
+    var obj:userObj = {
+        name: 'wenjwu',
+        age: '20'
+    }
+
+
+##### 5.4 类类型接口，对类的约束，类似抽象类 
+
+    interface Animal {
+        name: string;
+        eat(str:string):void;
+    }
+
+    class Dog implements Animal {
+        name:string;
+        constructor(name:string) {
+            this.name = name
+        }
+        eat() {
+            console.log(`${this.name}吃骨头`)
+        }
+    }
+
+    var dog = new Dog('Doby');
+    dog.eat(); //Doby吃骨头
+
+    class Cat implements Animal {
+        name: string;
+        constructor (name: string) {
+            this.name = name
+        }
+        eat(food: string) {
+            console.log(`${this.name}吃${food}`);
+        }
+    }
+    var c = new Cat('小猫');
+    c.eat('老鼠'); // 小猫吃老鼠
+
+#### 6. 接口扩展: 
+
+##### 6.1 接口可以继承接口
+    interface Animal {
+        eat():void;
+    }
+
+    interface Person extends Animal {
+        work():void;
+    }
+
+    class Web implements Person {
+        public name:string;
+        constructor(name: string) {
+            this.name = name
+        }
+        eat() {
+            console.log(`${this.name} is eating`)
+        }
+        work() {
+            console.log(`${this.name} is working`)
+        }
+    }
+
+    var W = new Web('Lily')
+    W.eat() // Lily is eating
+    W.work()  // Lily is working
+
+##### 6.2 类继承父类，实现接口
+
+    interface Animal {
+        eat():void;
+    }
+
+    interface Person extends Animal {
+        work():void;
+    }
+
+    class Program {
+        public n:string;
+        constructor(name: string) {
+            this.n = name;
+        }
+        coding(code: string) {
+            console.log(`${this.n} is ${code}`);
+        }
+    }
+
+    // 继承Program ，并且实现Person接口
+    class Web extends Program implements Person {
+        constructor(name: string) {
+            super(name)
+        }
+        eat() {
+            console.log(`${this.n} is eating`)
+        }
+        work() {
+            console.log(`${this.n} is working`)
+        }
+    }
+
+    var W = new Web('Lily')
+    W.eat() // Lily is eating
+    W.work()  // Lily is working
+    W.coding('coding')  // Lily is coding
+
+#### 7. 泛型
+
+一个组件可以支持多重类型的数据，解决接口、类、方法的复用性
+
+##### 7.1 泛型函数
+
+    // T 表示泛型，具体什么类型是调用这个方法时决定
+    function getData<T>(data: T):T{
+        return data
+    }
+
+    getData<number>(1111) // 返回1111
+    getData<number>('aaa') // 报错,参数必须是number
+
+##### 7.2 泛型类
+
+普通类
+
+    class MinNum {
+        public list:number[] = []
+        add(value: number):void {
+            this.list.push(value)
+        }
+        min():number {
+            let result = this.list[0]
+            for(let i = 0; i < this.list.length; i++) {
+                if (result > this.list[i]) {
+                    result = this.list[i]
+                }
+            }
+            return result
+        }
+    }
+    var M = new MinNum()
+    M.add(2)
+    M.add(23)
+    M.add(4)
+
+    M.min() // 2
+
+泛型类
+
+    class MinNum<T> {
+        public list:T[] = []        // 初始化类型为T的空数组
+        add(value: T):void {        
+            this.list.push(value)
+        }
+        min():T{
+            let result = this.list[0]
+            for(let i = 0; i < this.list.length; i++) {
+                if (result > this.list[i]) {
+                    result = this.list[i]
+                }
+            }
+            return result
+        }
+    }
+    var M = new MinNum()
+    M.add('b')
+    M.add('a')
+    M.add('d')
+
+    M.min() // a

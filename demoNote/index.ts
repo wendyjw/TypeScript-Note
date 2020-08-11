@@ -1,11 +1,21 @@
-interface encrypt {
-    (key: string, value: string):string //传入参数和返回值都是字符串
+class MinNum<T> {
+    public list:T[] = []        // 初始话类型为T的空数组
+    add(value: T):void {        
+        this.list.push(value)
+    }
+    min():T{
+        let result = this.list[0]
+        for(let i = 0; i < this.list.length; i++) {
+            if (result > this.list[i]) {
+                result = this.list[i]
+            }
+        }
+        return result
+    }
 }
+var M = new MinNum()
+M.add('b')
+M.add('a')
+M.add('d')
 
-var md5:encrypt = function(name: string, id: string):string { //定义md5函数
-    return `${name}-${id}`
-}
-var sha1:encrypt = function(key: string, value:string):string {
-    return `${key} is ${value}`
-}
-md5('wenjwu','conf6300')
+M.min() // a
