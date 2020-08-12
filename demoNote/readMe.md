@@ -767,3 +767,118 @@ boolean, number, string, Array, null, undefined,
     M.add('d')
 
     M.min() // a
+
+
+##### 7.2 泛型接口
+
+函数类型接口
+
+    interface config {
+        (name:string, age:number):string
+    }
+    var getInfo:config = function (value1: string, value2: number):string {
+        return `My name is ${value2}, age is ${value2}`
+    }
+
+泛型接口方法1
+
+    interface config {
+        <T>(value:T): T
+    }
+    var getInfo:config = function<T>(value: T):T {
+        return value;
+    }
+
+    getInfo<number>(12)   
+    getInfo<string>('wenjwu')
+
+
+泛型接口方法2
+
+    interface config<T> {
+        (value:T): T;
+    }
+    function getData <T>(value: T):T {
+        return value;
+    }
+
+    var getInfo:config<string>=getData;
+    getInfo('123');
+
+
+**泛型例子**：
+
+
+1. 把类作为参数 来约束数据传入的类型  
+
+普通类
+    class User {
+        name: string | undefined;
+        age: number | undefined;
+    }
+
+    class DB {
+        add(user: User):boolean {
+            console.log(user);   // {name: 'wenjwu', age: 12}
+            return true;
+        }
+    }
+    var user = new User();
+    user.name = 'wenjwu';
+    user.age = 12;
+
+    var mgDb = new DB();
+    mgDb.add(user);  
+
+
+泛型类
+
+    <!-- 操作数据库的泛型类 -->
+    class DB<T> {
+        add(value: T):boolean {
+            console.log(value);
+            return true;
+        }
+    }
+
+    <!-- 1. 定义User类，和数据库进行映射 -->
+    class User {
+        name: string | undefined;
+        age: number | undefined;
+    }
+
+    var user = new User();
+    // 实例化赋值
+    user.name='wenjwu';
+    user.age=12;
+
+
+    // var mgDB = new DB()
+    // mgDB.add(user)    // {name: 'wenjwu', age: 12}
+    // mgDB.add('1111')    // '1111', 不会报错，没有对参数类型进行限制，传入任何参数都可以
+
+
+    <!-- 给数据库增加user数据 -->
+    var mgDB = new DB<User>();
+    mgDB.add(user);  // {name: 'wenjwu', age: 12}
+    mgDB.add('1111');    // 报错，‘1111’的类型与User类类型不一致
+
+
+   <!-- 定义Article类，和数据库进行映射 -->
+    class Article {
+        title: string | undefined;
+        desc: string | undefined;
+        // 实例化时传值
+        constructor(params: {
+            title: string | undefined,
+            desc?: string | undefined
+        }) {
+            this.title = params.title;
+            this.desc = params.desc;
+        }
+    }
+
+    var art = new Article({title: 'title', desc: 'description'});
+
+    var mgDB1 = new DB<Article>();
+    mgDB1.add(art);  // {title: 'title', desc: 'description'}

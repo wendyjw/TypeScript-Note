@@ -1,19 +1,35 @@
 "use strict";
-var Dog = /** @class */ (function () {
-    function Dog(name) {
-        this.name = name;
+var DB = /** @class */ (function () {
+    function DB() {
     }
-    Dog.prototype.eat = function () {
-        console.log(this.name + "\u5403\u9AA8\u5934");
+    DB.prototype.add = function (value) {
+        console.log(value);
+        return true;
     };
-    return Dog;
+    return DB;
 }());
-var dog = new Dog('Doby');
-var Cat = /** @class */ (function () {
-    function Cat(name) {
-        this.name = name;
+var User = /** @class */ (function () {
+    function User() {
     }
-    Cat.prototype.eat = function () {
-    };
-    return Cat;
+    return User;
 }());
+var user = new User();
+user.name = 'wenjwu';
+user.age = 12;
+// var mgDB = new DB()
+// mgDB.add(user)    // {name: 'wenjwu', age: 12}
+// mgDB.add('1111')    // '1111', 不会报错，没有对参数类型进行限制，传入任何参数都可以
+var mgDB = new DB();
+mgDB.add(user); // {name: 'wenjwu', age: 12}
+// mgDB.add('1111')    // 报错，‘1111’的类型与User类类型不一致
+var Article = /** @class */ (function () {
+    // 实例化时传值
+    function Article(params) {
+        this.title = params.title;
+        this.desc = params.desc;
+    }
+    return Article;
+}());
+var art = new Article({ title: 'title', desc: 'description' });
+var mgDB1 = new DB();
+mgDB1.add(art);
