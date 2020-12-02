@@ -41,3 +41,10 @@ var art = new Article({title: 'title', desc: 'description'});
 
 var mgDB1 = new DB<Article>();
 mgDB1.add(art);
+function getInfo(name:string, age?:number):string{
+    if (age) {
+        return `name is ${name}, age is ${age}`
+    } else {
+        return `name is ${name}, age is unknow`
+    }
+}
