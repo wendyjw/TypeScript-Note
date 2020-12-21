@@ -1,4 +1,4 @@
-https://www.bilibili.com/video/BV1zJ411u7RM?p=8
+https://www.bilibili.com/video/BV1yt411e7xV?p=16
 #### 1. 环境搭建
 1. tsc --init
 2. 修改outDir: './js'
@@ -182,7 +182,7 @@ boolean, number, string, Array, null, undefined,
     function getInfo(name:string):string; //  没有方法体
     function getInfo(age:number):string; //  没有方法体
     function getInfo(str:any):any {
-        if (type of str === 'string) {
+        if (typeOf str === 'string) {
             return `My name is ${str}`
         } else {
             return `My age is ${str}`
@@ -870,7 +870,7 @@ boolean, number, string, Array, null, undefined,
 
 
     <!-- 给数据库增加user数据 -->
-    var mgDB = new DB<User>();
+    var mgDB = new DB<User>(); // 
     mgDB.add(user);  // {name: 'wenjwu', age: 12}
     mgDB.add('1111');    // 报错，‘1111’的类型与User类类型不一致
 
@@ -891,5 +891,68 @@ boolean, number, string, Array, null, undefined,
 
     var art = new Article({title: 'title', desc: 'description'});
 
-    var mgDB1 = new DB<Article>();
+    var mgDB1 = new DB<Article>(); //把类当作参数来约定参数类型
     mgDB1.add(art);  // {title: 'title', desc: 'description'}
+
+
+2. 分别使用mysal,MMsql数据库进行数据操作
+
+    1. 定义接口
+    interface DB1<T> {
+        add(info: T):boolean;
+        update(info: T,id: number):boolean;
+        delete(id: number):boolean;
+        get(id: number):any[];
+    }
+
+    2. 定义操作不同数据库的方法
+    class Mysql<T> implements DB1<T> {
+        add(info: T): boolean {
+            console.log(info)
+            return true;
+        }
+        update(info: T, id: number): boolean {
+            throw new Error("Method not implemented.");
+        }
+        delete(id: number): boolean {
+            throw new Error("Method not implemented.");
+        }
+        get(id: number): any[] {
+            throw new Error("Method not implemented.");
+        }
+    }
+    class MMsql<T> implements DB1<T> {
+        add(info: T): boolean {
+            console.log(info)
+            return true;
+        }
+        update(info: T, id: number): boolean {
+            throw new Error("Method not implemented.");
+        }
+        delete(id: number): boolean {
+            throw new Error("Method not implemented.");
+        }
+        get(id: number): any[] {
+            // todo
+            return []
+        }
+    }
+    class User {
+        username: string | undefined;
+        age: number | undefined;
+    }
+    let u = new User()
+    u.username = 'wenjwu'
+    u.age = 28
+
+    // 使用不同数据库
+    let oMysql = new Mysql<User>()
+    oMysql.add(u)
+    oMysql.get(1)
+
+    let OMMsql = new MMsql<User>()
+    OMMsql.add(u)
+
+
+P17: 模块化
+#### 8. 模块化: 
