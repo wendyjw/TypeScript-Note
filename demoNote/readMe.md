@@ -961,4 +961,110 @@ export / import 用法
 #### 9. 装饰器
 是一种方法，可以注入到类、方法、属性参数上来修改、扩展类、属性、方法、参数的功能；
 常见装饰器：类装饰器，属性装饰器，方法装饰器，参数装饰器
-##### 9.1 类装饰器
+##### 9.1 类装饰器(无参)
+
+        function logClass(params:any) {
+            <!-- parmas 就是传进来的类 HttpClass -->
+
+            console.log(params);
+            params.prototype.apiUrl='动态扩展的属性'
+            params.prototype.run= funciton () {
+                console.log('is running in logClass');
+            }
+        }
+
+        @logClass // 没有分号
+        class HttpClass {
+            constructor(){
+            }
+            getData() {
+            }
+        }
+        var http:any = new HttpClass()
+        console.log(http.apiUrl); //动态扩展的属性
+        http.run() // is running in logClass
+
+##### 9.2 类装饰器: 装饰器工厂(有参)
+
+        function logClass(params:string) {
+            <!-- parmas 就是传进来的参数：hello -->
+            console.log(params);
+            return function (target:any) {
+                <!-- target就是传进来的类 HttpClass  -->
+                target.prototype.apiUrl=params
+                target.prototype.run= funciton () {
+                    console.log('is running in logClass');
+                }
+            }
+            
+        }
+
+        @logClass('hello')
+        class HttpClass {
+            constructor(){
+            }
+            getData() {
+            }
+        }
+        var http:any = new HttpClass()
+        console.log(http.apiUrl); // hello
+        http.run() // is running in logClass
+
+##### 9.3 类装饰器修改构造函数
+修改以前类的构造函数和属性方法
+
+        function logClass(target:any) {
+            <!-- parmas 就是传进来的类 HttpClass -->
+
+            return class extends target {
+                target.prototype.apiUrl='重置后的apiUrl'
+                getData() {
+                    this.apiUrl = this.apiUrl + '----'
+                    console.log(this.apiUrl);
+                }
+            }
+        }
+
+        @logClass
+        class HttpClass {
+            public apiUrl: stirng | undefined
+            constructor(){
+               this.apiUrl = '构造函数中的apiUrl'
+            }
+            getData() {
+                console.log(this.apiUrl);
+            }
+        }
+        var http:any = new HttpClass()
+        http.getData() //重置后的apiUrl----
+
+
+##### 9.4 属性装饰器
+
+##### 9.5 方法装饰器
+
+
+    function get(params:string) {
+        // params 传入的参数:hello
+        return funciton (target:any, methodName: string, desc: any) {
+            // target:传进来的方法，function getDate(){}
+            // methodName: 传进的方法名称 ‘getData’
+            // deps: 方法说明
+           
+           var oMethod = apiUrl.value;
+
+        }
+    }
+
+
+    class HttpClass {
+            public apiUrl: string | undefined;
+            constructor(){
+               this.apiUrl = '构造函数中的apiUrl'
+            }
+            @FunClass('hello')
+            getData() {
+                console.log(this.apiUrl);
+            }
+    }
+    var http = new HttpClass()
